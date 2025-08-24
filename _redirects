@@ -1,0 +1,13 @@
+# =======================
+# Cloudflare Pages Redirects 配置
+# =======================
+
+# 你的 emby 短链
+/Normal.fwd   https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.nor.fwd?token=emby   302
+
+# Emby 服务别名
+/Nsfw.fwd   https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.sex.fwd?token=emby   302
+
+
+# 通配符示例：把 /go/anything 跳转到外部对应路径
+/go/*    https://target.example.com/:splat   302
