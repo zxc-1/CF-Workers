@@ -102,3 +102,27 @@ async function ADD(envadd) {
 	//console.log(add);
 	return add ;
 }
+
+// _worker.js
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+
+    if (url.pathname === '/Normal.fwd') {
+      return Response.redirect(
+        'https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.nor.fwd?token=emby',
+        302
+      );
+    }
+
+    if (url.pathname === '/Nsfw.fwd') {
+      return Response.redirect(
+        'https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.sex.fwd?token=emby',
+        302
+      );
+    }
+
+    // 其它请求照常走静态资源/默认处理
+    return fetch(request);
+  }
+}
