@@ -2,6 +2,22 @@ let token = "";
 export default {
 	async fetch(request ,env) {
 		const url = new URL(request.url);
+		   /* ======== 新增：两条短链的跳转优先处理 ======== */
+  if (url.pathname === "/Normal.fwd") {
+      const t = env.EMBY_TOKEN_NORMAL || url.searchParams.get("token");
+      if (!t) return new Response("Missing token for Normal.fwd", { status: 400 });
+      const target = new URL("https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.nor.fwd");
+      target.searchParams.set("token", t);
+      return Response.redirect(target.toString(), 302);
+    }
+  if (url.pathname === "/Nsfw.fwd") {
+      const t = env.EMBY_TOKEN_NSFW || url.searchParams.get("token");
+      if (!t) return new Response("Missing token for Nsfw.fwd", { status: 400 });
+      const target = new URL("https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.sex.fwd");
+      target.searchParams.set("token", t);
+      return Response.redirect(target.toString(), 302);
+    }
+    /* ======== 新增结束 ======== */
 		if(url.pathname !== '/'){
 			let githubRawUrl = 'https://raw.githubusercontent.com';
 			if (new RegExp(githubRawUrl, 'i').test(url.pathname)){
@@ -101,28 +117,4 @@ async function ADD(envadd) {
 	const add = addtext.split(',');
 	//console.log(add);
 	return add ;
-}
-
-// _worker.js
-export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-
-    if (url.pathname === '/Normal.fwd') {
-      return Response.redirect(
-        'https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.nor.fwd?token=emby',
-        302
-      );
-    }
-
-    if (url.pathname === '/Nsfw.fwd') {
-      return Response.redirect(
-        'https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.sex.fwd?token=emby',
-        302
-      );
-    }
-
-    // 其它请求照常走静态资源/默认处理
-    return fetch(request);
-  }
 }
