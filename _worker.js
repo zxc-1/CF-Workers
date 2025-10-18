@@ -64,14 +64,13 @@ export default {
     const path = url.pathname;
 
     // ========= 短链：共用 EMBY_TOKEN（优先用环境变量，其次用 ?token=） =========
-    if (path === "/Normal.fwd" || path === "/Danmu.fwd"|| path === "/Nsfw.fwd") {
+    if (path === "/Normal.fwd" || path === "/Nsfw.fwd") {
       const t = env.EMBY_TOKEN || url.searchParams.get("token");
       if (!t) return new Response("Missing token", { status: 400 });
 
       const targetPath =
         path === "/Normal.fwd"
           ? "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.nor.fwd"
-          : "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/danmu.fwd"
           : "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.sex.fwd";
 
       const target = new URL(targetPath);
