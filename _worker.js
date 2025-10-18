@@ -27,7 +27,7 @@ async function maybeInjectBase(resp, baseHref) {
   return new Response(injected, { status: resp.status, headers: h });
 }
 
-// ===== 你的首页伪装页 & 辅助函数 =====
+// ===== 你的首页伪装页 & 辅助函数（保持不变） =====
 async function nginx() {
   const text = `
   <!DOCTYPE html>
@@ -61,23 +61,22 @@ let token = "";
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const path = url.pathname;
+    // 统一去掉末尾斜杠 & 大小写无关匹配
+    const pathRaw = url.pathname.replace(/\/+$/,"") || "/";
+    const path = pathRaw.toLowerCase();
 
-    // ========= 短链：共用 EMBY_TOKEN（优先用环境变量，其次用 ?token=） =========
-    if (path === "/Normal.fwd" || path === "/Nsfw.fwd" || path === "/Danmu.fwd") {
+    // ========= 映射表：短链 → 目标地址（共用 EMBY_TOKEN） =========
+    const forwardMap = {
+      "/normal.fwd": "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.nor.fwd",
+      "/nsfw.fwd":   "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.sex.fwd",
+      "/danmu.fwd":  "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/danmu.fwd"
+    };
+
+    if (path in forwardMap) {
       const t = env.EMBY_TOKEN || url.searchParams.get("token");
-      if (!t) return new Response("Missing token", { status: 400 });
+      if (!t) return new Response("Missing token (set EMBY_TOKEN or use ?token=...)", { status: 400 });
 
-      let targetPath;
-      if (path === "/Normal.fwd") {
-        targetPath = "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.nor.fwd";
-      } else if (path === "/Nsfw.fwd") {
-        targetPath = "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.sex.fwd";
-      } else if (path === "/Danmu.fwd") {
-        targetPath = "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/danmu.fwd";
-      }
-
-      const target = new URL(targetPath);
+      const target = new URL(forwardMap[path]);
       target.searchParams.set("token", t);
 
       // 反向代理返回（地址栏保持短链）
@@ -90,7 +89,7 @@ export default {
       });
     }
 
-    // ========= 可选通配短链：/go/* → 目标站同名路径 =========
+    // ========= 可选通配短链：/go/* → 目标站同名路径（按需保留） =========
     if (path.startsWith("/go/")) {
       const splat = path.replace(/^\/go\//, "");
       const target = `https://target.example.com/${splat}`;
@@ -98,11 +97,11 @@ export default {
       return new Response(resp.body, { status: resp.status, headers: cloneHeaders(resp.headers) });
     }
 
-    // ========= GitHub Raw 代理逻辑 =========
+    // ========= 你的原始 GitHub Raw 代理逻辑（保持原样） =========
     if (path !== "/") {
       let githubRawUrl = "https://raw.githubusercontent.com";
-      if (new RegExp(githubRawUrl, "i").test(path)) {
-        githubRawUrl += path.split(githubRawUrl)[1];
+      if (new RegExp(githubRawUrl, "i").test(pathRaw)) {
+        githubRawUrl += pathRaw.split(githubRawUrl)[1];
       } else {
         if (env.GH_NAME) {
           githubRawUrl += "/" + env.GH_NAME;
@@ -111,10 +110,10 @@ export default {
             if (env.GH_BRANCH) githubRawUrl += "/" + env.GH_BRANCH;
           }
         }
-        githubRawUrl += path;
+        githubRawUrl += pathRaw;
       }
 
-      // token 选择顺序
+      // token 选择顺序（与你原来一致）
       if (env.GH_TOKEN && env.TOKEN) {
         if (env.TOKEN == url.searchParams.get("token")) token = env.GH_TOKEN || token;
         else token = url.searchParams.get("token") || token;
@@ -138,14 +137,13 @@ export default {
       }
     }
 
-    // ========= 根路径：跳转或伪装页 =========
+    // ========= 根路径：与你原来一致 =========
     const envKey = env.URL302 ? "URL302" : (env.URL ? "URL" : null);
     if (envKey) {
       const URLs = await ADD(env[envKey]);
       const URL = URLs[Math.floor(Math.random() * URLs.length)];
       return envKey === "URL302" ? Response.redirect(URL, 302) : fetch(new Request(URL, request));
     }
-
     return new Response(await nginx(), {
       headers: { "Content-Type": "text/html; charset=UTF-8" }
     });
