@@ -64,7 +64,7 @@ export default {
     const path = url.pathname;
 
     // ========= 短链：共用 EMBY_TOKEN（优先用环境变量，其次用 ?token=） =========
-    if (path === "/Normal.fwd" || path === "/Nsfw.fwd") {
+    if (path === "/Normal.fwd" || path === "/Danmu.fwd"|| path === "/Nsfw.fwd") {
       const t = env.EMBY_TOKEN || url.searchParams.get("token");
       if (!t) return new Response("Missing token", { status: 400 });
 
