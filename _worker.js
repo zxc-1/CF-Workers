@@ -67,8 +67,8 @@ export default {
 
     // ========= 映射表：短链 → 目标地址（共用 EMBY_TOKEN） =========
     const forwardMap = {
-      "/normal.fwd": "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.nor.fwd",
-      "/nsfw.fwd":   "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.sex.fwd",
+      "/normal.fwd": "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/Normal.fwd",
+      "/nsfw.fwd":   "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/Nsfw.fwd",
       "/danmu.fwd":  "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/danmu.fwd"
     };
 
