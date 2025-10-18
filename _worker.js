@@ -71,6 +71,7 @@ export default {
       const targetPath =
         path === "/Normal.fwd"
           ? "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.nor.fwd"
+          : "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/danmu.fwd"
           : "https://edec7dc6.cf-workers-2u5.pages.dev/zxc-1/Forward-Widgets/refs/heads/main/zxc-1.sex.fwd";
 
       const target = new URL(targetPath);
